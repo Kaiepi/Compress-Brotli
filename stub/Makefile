@@ -34,9 +34,10 @@ endif
 # Linkable Targets
 #============================================
 
-LIBSO = libperl6brotli.so
-LIBA  = $(LIBSO).1
-LIBB  = $(LIBSO).1.0.1 
+LIBN = libperl6brotli.dylib
+LIBM = /usr/local/lib/$(LIBN)
+LIBA = $(LIBSO).1
+LIBB = $(LIBSO).1.0.1 
 
 #============================================
 # Flags
@@ -64,17 +65,31 @@ OBJECTS= $(SOURCE:.cpp=.o)
 # Linking
 #============================================
 
-library: $(CFLAGS) += -fPIC 
 library: $(OBJECTS)
-	$(CC) $(DEPENDS) -shared -Wl,$(NAME_LIB),$(LIBA) -o $(LIBB) $^
-	ln -sf  $(LIBB) $(LIBSO)
-	ln -sf  $(LIBB) $(LIBA)
+	$(CC) $(DEPENDS) -dynamiclib -undefined suppress -flat_namespace $^ -o $(LIBN)
+#	$(CC) $(DEPENDS) -shared -Wl,$(NAME_LIB),$(LIBA) -o $(LIBB) $^
+	-rm $(LIBM)
+	ln -sf ~/Dropbox/Projects/perl6/compress-brotli/stub/libperl6brotli.dylib $(LIBM)
+#	ln -sf  $(LIBB) $(LIBA)
+
+
+#============================================
+# Fetch the required dependencies
+#============================================
+setup:
+	git clone https://github.com/bagder/libbrotli
+	`cd libbrotli; ./autogen.sh; ./configure`
+	make -C libbrotli
+	make install -C Libbrotli
 
 #============================================
 # Results
 #============================================
 
 all: library
+
+install:
+	
 #	find . -name "*.gcda" -print0 | xargs -0 rm # clean up gcda
 
 #============================================
@@ -82,7 +97,7 @@ all: library
 #============================================
 
 clean:
-	$(RM) $(OBJECTS) $(OBJECTS) $(LIBA) $(LIBB)
+	$(RM) $(OBJECTS) $(OBJECTS) $(LIBN) $(LIBB)
 
 
 

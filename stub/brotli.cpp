@@ -16,6 +16,7 @@
 #include <vector>
 #include <cstring>
 #include <cstdint>
+#include <stdio.h>
 #include <brotli/dec/decode.h>
 #include <brotli/enc/encode.h>
 
@@ -89,6 +90,7 @@ extern "C" {
     params.quality = conf.quality;
     params.lgwin = conf.lgwin;
     params.lgblock = conf.lgblock;
+    printf("inputsize = %lu - input = %s",input_size,input_buffer);
     return brotli::BrotliCompressBuffer(params,input_size,input_buffer,encoded_size,encoded_buffer);
   }
 
