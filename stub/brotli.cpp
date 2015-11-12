@@ -35,7 +35,7 @@ int callback(void* data, const uint8_t* more, size_t count)
 extern "C" {
 
   // Brotli compression configuration
-  typedef struct config_s {
+ typedef struct config_s {
     int mode;
     int quality;
     int lgwin;
@@ -83,14 +83,14 @@ extern "C" {
    *  Description:  use the brotli buffer compression function
    * =====================================================================================
    */ 
-  int compress_buffer(config conf,size_t input_size, const uint8_t* input_buffer,size_t* encoded_size, uint8_t* encoded_buffer)
+  int compress_buffer(size_t input_size, const uint8_t* input_buffer,size_t* encoded_size, uint8_t* encoded_buffer, config conf)
   {
     brotli::BrotliParams params;
     params.mode = (enum brotli::BrotliParams::Mode) conf.mode; 
     params.quality = conf.quality;
     params.lgwin = conf.lgwin;
     params.lgblock = conf.lgblock;
-    printf("inputsize = %lu - input = %s",input_size,input_buffer);
+    printf("inputsize = %lu - input = %d\n",input_size,input_buffer[2]);
     return brotli::BrotliCompressBuffer(params,input_size,input_buffer,encoded_size,encoded_buffer);
   }
 

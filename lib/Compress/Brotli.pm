@@ -9,7 +9,7 @@ module Compress::Brotli:ver<0.1.0> {
   #======================================
   constant LIBNAME = 'libperl6brotli';
 
-  sub compress_buffer(CArray[int],Int,CArray[uint8], CArray[int], CArray[uint8] --> Int) 
+  sub compress_buffer(Int,CArray[uint8], CArray[int], CArray[uint8], CArray[int] --> Int) 
     is native(LIBNAME) { * }
   sub decompress_buffer(Int,CArray[uint8], CArray[int]--> CArray[uint8]) 
     is native(LIBNAME) { * }
@@ -61,16 +61,17 @@ module Compress::Brotli:ver<0.1.0> {
     $conf[1] = 11;
     $conf[2] = 22;
     $conf[3] = 0;
-    my $in_size = $data.bytes();
+    my Int $in_size = $data.bytes();
     my $input = CArray[uint8].new();
 	  $input[$_] = $data[$_] for ^$data.bytes;
+    say $input[2];
     my $max_out_size = 1.2 * $in_size  + 10240;
     my $out_size = to_pointer($max_out_size.Int);
     my $array = CArray[uint8].new();
     $array[$_] = 0 for ^$max_out_size;
-    say compress_buffer($conf,$in_size,$input,$out_size,$array);
+    say compress_buffer($in_size,$input,$out_size,$array,$conf);
     X::Compress::Brotli.new(:message("Failed to compress!")).throw()
-      unless compress_buffer($conf,$in_size,$input,$out_size,$array);
+      unless compress_buffer($in_size,$input,$out_size,$array,$conf);
 	  return Buf.new: map {$array[$_]}, ^$out_size[0];
   }
 
@@ -85,6 +86,11 @@ module Compress::Brotli:ver<0.1.0> {
 	  my $res = Buf.new: map {$array[$_]}, ^$out_size[0];
     clear_internal_buffer(); #once copied we can clear the buffer
     return $res;
+  }
+
+  sub decode_str(Buf $data --> Str) is export
+  {
+    return $data.decode("UTF-8");
   }
 
 }
