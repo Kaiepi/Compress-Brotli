@@ -7,9 +7,17 @@ module Compress::Brotli:ver<0.1.0> {
   #======================================
   # Native functions
   #======================================
+
   constant LIBNAME = 'libperl6brotli';
 
-  sub compress_buffer(Int,CArray[uint8], CArray[int], CArray[uint8], CArray[int] --> Int) 
+  class Config is repr('CStruct') {
+    has int8 $.mode;
+    has int8 $.quality;
+    has int8 $.lgwin;
+    has int8 $.lgblock;
+  }
+
+  sub compress_buffer(Int,CArray[uint8], CArray[int], CArray[uint8],Config --> Int) 
     is native(LIBNAME) { * }
   sub decompress_buffer(Int,CArray[uint8], CArray[int]--> CArray[uint8]) 
     is native(LIBNAME) { * }
@@ -28,13 +36,6 @@ module Compress::Brotli:ver<0.1.0> {
   # Config for brotli compression
   #======================================
   
-  class Config is repr('CStruct') {
-    has int $.mode;
-    has int $.quality;
-    has int $.lgwin;
-    has int $.lgblock;
-  }
-
   # from Compress::Snappy
 	# Simulate an int pointer with a CArray
   sub to_pointer(Int $value = 0) {
@@ -55,21 +56,14 @@ module Compress::Brotli:ver<0.1.0> {
 
   multi sub compress(Blob $data) { 
     # default config
-    #my $conf = Config.new(:mode(0),:quality(11),:lgwin(22),:lgblock(0));
-    my $conf = CArray[int].new();
-    $conf[0] = 0;
-    $conf[1] = 11;
-    $conf[2] = 22;
-    $conf[3] = 0;
+    my $conf = Config.new(:mode(0),:quality(11),:lgwin(22),:lgblock(0));
     my Int $in_size = $data.bytes();
     my $input = CArray[uint8].new();
 	  $input[$_] = $data[$_] for ^$data.bytes;
-    say $input[2];
     my $max_out_size = 1.2 * $in_size  + 10240;
     my $out_size = to_pointer($max_out_size.Int);
     my $array = CArray[uint8].new();
     $array[$_] = 0 for ^$max_out_size;
-    say compress_buffer($in_size,$input,$out_size,$array,$conf);
     X::Compress::Brotli.new(:message("Failed to compress!")).throw()
       unless compress_buffer($in_size,$input,$out_size,$array,$conf);
 	  return Buf.new: map {$array[$_]}, ^$out_size[0];
