@@ -34,8 +34,10 @@ endif
 # Linkable Targets
 #============================================
 
-LIBN = libperl6brotli.dylib
-LIBM = /usr/local/lib/$(LIBN)
+DESTINATION = ../lib/Compress/
+LIBN = libperl6brotli
+LIBDY = $(DESTINATION)$(LIBN).dylib
+LIBSO = $(DESTINATION)$(LIBN).so
 LIBA = $(LIBSO).1
 LIBB = $(LIBSO).1.0.1 
 
@@ -43,8 +45,8 @@ LIBB = $(LIBSO).1.0.1
 # Flags
 #============================================
 
-CFLAGS = -Wall 
-DEPENDS = -L/usr/local/lib -lbrotlienc -lbrotlidec -lstdc++
+CFLAGS = -Wall -std=gnu++11
+DEPENDS = -L./libbrotli/lib/ -lbrotlienc -lbrotlidec -lstdc++ 
 
 #============================================
 # Compilation sources
@@ -59,45 +61,44 @@ OBJECTS= $(SOURCE:.cpp=.o)
 #============================================
 
 %.o: %.cpp
-	$(CC) $(CFLAGS) -I/usr/local/include -c -o $@ $<	#TODO parameterize includes
+	$(CC) $(CFLAGS) -I./libbrotli/include/ -c -o $@ $<	#TODO parameterize includes
 
 #============================================
 # Linking
 #============================================
 
-library: $(OBJECTS)
-	$(CC) $(DEPENDS) -dynamiclib -undefined suppress -flat_namespace $^ -o $(LIBN)
-#	$(CC) $(DEPENDS) -shared -Wl,$(NAME_LIB),$(LIBA) -o $(LIBB) $^
-	-rm $(LIBM)
-	ln -sf ~/Dropbox/Projects/perl6/compress-brotli/stub/libperl6brotli.dylib $(LIBM)
-#	ln -sf  $(LIBB) $(LIBA)
+darwin: $(OBJECTS)
+	$(CC) $(DEPENDS) -dynamiclib -undefined suppress -flat_namespace $^ -o $(LIBDY)
+	#ln -sf ./libperl6brotli.dylib $(DESTINATION)$(LIBN)
 
+linux: CFLAGS += -fPIC
+linux: $(OBJECTS)
+	$(CC) $(DEPENDS) -shared -Wl,$(NAME_LIB),$(LIBA) -o $(LIBB) $^
+	ln -sf  $(LIBB) $(LIBSO)
+	ln -sf  $(LIBB) $(LIBA)
 
 #============================================
 # Fetch the required dependencies
 #============================================
 setup:
-	git clone https://github.com/bagder/libbrotli
-	`cd libbrotli; ./autogen.sh; ./configure`
-	make -C libbrotli
-	make install -C Libbrotli
+	./fetch
 
 #============================================
 # Results
 #============================================
 
-all: library
+all: setup $(DEF_TARGET)
 
 install:
 	
-#	find . -name "*.gcda" -print0 | xargs -0 rm # clean up gcda
 
 #============================================
 # Helpers
 #============================================
 
 clean:
-	$(RM) $(OBJECTS) $(OBJECTS) $(LIBN) $(LIBB)
+	$(RM) $(OBJECTS) $(OBJECTS) $(LIBDY) $(LIBB) $(LIBSO) $(LIBA)
+	$(RM) -rf libbrotli
 
 
 

@@ -4,6 +4,6 @@ use LibraryMake;
 
 class Build is Panda::Builder {
     method build($workdir) {
-        make("$workdir/stub"); 
+       shell("cd stub; make"); 
     }
 }

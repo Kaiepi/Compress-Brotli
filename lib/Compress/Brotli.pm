@@ -1,5 +1,7 @@
 use v6;
 use NativeCall;
+use Find::Bundled;
+use LibraryMake;
 
 module Compress::Brotli:ver<0.1.0> {
 
@@ -8,7 +10,10 @@ module Compress::Brotli:ver<0.1.0> {
   # Native functions
   #======================================
 
-  constant LIBNAME = 'libperl6brotli';
+  sub library {
+    my $so = get-vars('')<SO>;
+    return Find::Bundled.find("libperl6brotli$so", "Compress/Brotli", :throw); 
+  }
 
   class Config is repr('CStruct') {
     has int8 $.mode;
@@ -18,10 +23,10 @@ module Compress::Brotli:ver<0.1.0> {
   }
 
   sub compress_buffer(Int,CArray[uint8], CArray[int], CArray[uint8],Config --> Int) 
-    is native(LIBNAME) { * }
+    is native(&library) { * }
   sub decompress_buffer(Int,CArray[uint8], CArray[int]--> CArray[uint8]) 
-    is native(LIBNAME) { * }
-  sub clear_internal_buffer() is native(LIBNAME) { * }
+    is native(&library) { * }
+  sub clear_internal_buffer() is native(&library) { * }
 
   #======================================
   # Exceptions

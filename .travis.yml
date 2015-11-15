@@ -1,0 +1,12 @@
+language: perl6
+perl6:
+    - latest
+
+install:
+    - sudo apt-get -y install autoconf
+    - sudo apt-get -y install g++
+    - sudo apt-get -y install libtool
+    - rakudobrew build-panda
+    - panda install LibraryMake
+    - panda install Find::Bundled
+
