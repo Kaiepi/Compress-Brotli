@@ -10,9 +10,23 @@ module Compress::Brotli:ver<0.1.0> {
   # Native functions
   #======================================
 
-  sub library {
-    my $so = get-vars('')<SO>;
-    return Find::Bundled.find("libperl6brotli$so", "Compress/Brotli", :throw); 
+  # adapted from Crypt::Bycrypt
+  sub library(--> Str) {
+	  state Str $path;
+	  unless $path {
+      my $so = get-vars('')<SO>;
+		  my $libname = 'libperl6brotli'~$so;
+		  for @*INC {
+			  my $inc-path = $_.IO.path.subst(/ ['file#' || 'inst#'] /, '');
+			  my $check = $*SPEC.catfile($inc-path, $libname);
+			  if $check.IO ~~ :f {
+				  $path = $check;
+				  last;
+			  }
+		  }
+			die ("Unable to locate library: $libname") unless $path;
+	  }
+	  return $path;
   }
 
   class Config is repr('CStruct') {
