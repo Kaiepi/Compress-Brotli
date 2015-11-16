@@ -34,7 +34,7 @@ endif
 # Linkable Targets
 #============================================
 
-DESTINATION = ../lib/Compress/
+DESTINATION = ../lib/
 LIBN = libperl6brotli
 LIBDY = $(DESTINATION)$(LIBN).dylib
 LIBSO = $(DESTINATION)$(LIBN).so

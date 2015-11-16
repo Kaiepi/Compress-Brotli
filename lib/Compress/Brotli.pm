@@ -1,6 +1,5 @@
 use v6;
 use NativeCall;
-use Find::Bundled;
 use LibraryMake;
 
 module Compress::Brotli:ver<0.1.0> {
