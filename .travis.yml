@@ -9,3 +9,5 @@ install:
     - rakudobrew build-panda
     - panda install LibraryMake
 
+script: panda-build && prove -e perl6 t
+

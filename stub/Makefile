@@ -7,8 +7,8 @@
 # Tools
 #============================================
 
-LD = gcc
-CC = gcc
+LD = g++
+CC = g++
 SHELL := /bin/bash
 
 #============================================
@@ -45,8 +45,8 @@ LIBB = $(LIBSO).1.0.1
 # Flags
 #============================================
 
-CFLAGS = -Wall -std=gnu++11
-DEPENDS = -L./libbrotli/lib/ -lbrotlienc -lbrotlidec -lstdc++ 
+CFLAGS = -Wall -std=gnu++11 -lstdc++ 
+DEPENDS = -L./libbrotli/lib/  -lbrotlienc -lbrotlidec 
 
 #============================================
 # Compilation sources
@@ -73,7 +73,7 @@ darwin: $(OBJECTS)
 
 linux: CFLAGS += -fPIC
 linux: $(OBJECTS)
-	$(CC) $(DEPENDS) -shared -Wl,$(NAME_LIB),$(LIBA) -o $(LIBB) $^
+	$(CC) -shared -Wl,$(NAME_LIB),$(LIBA) -o $(LIBB) $^  ./libbrotli/lib/libbrotlienc.a ./libbrotli/lib/libbrotlidec.a
 	ln -sf  $(LIBB) $(LIBSO)
 	ln -sf  $(LIBB) $(LIBA)
 
