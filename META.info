@@ -7,5 +7,5 @@
     "provides" : {
         "Compress::Brotli" : "lib/Compress/Brotli.pm"
     },
-    "source-url" : "git://github.com/sylvaratn/Compress-Brotli.git"
+    "source-url" : "git://github.com/sylvarant/Compress-Brotli.git"
 }
