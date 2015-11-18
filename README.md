@@ -1,5 +1,5 @@
 # Perl6 Brotli Compression
-[![Build Status](https://travis-ci.org/sylvarant/Compress-Brotli.svg?branch=master)](https://travis-ci.org/sylvarant/Compress-Brotli)
+[![Build Status](https://travis-ci.org/sylvarant/Compress-Brotli.svg?branch=master)](https://travis-ci.org/sylvarant/Compress-Brotli) [![artistic](https://img.shields.io/badge/license-Artistic%202.0-blue.svg?style=flat)](https://opensource.org/licenses/Artistic-2.0)
 
 Provides acces to [Brotli compression](https://github.com/google/brotli) by means of the perl6 NativeCall API.  
 
@@ -26,6 +26,10 @@ my Config $conf = Config.new(:mode(1),:quality(1),:lgwin(10),:lgblock(0));
 my Buf $blob = compress("a simple string",$conf);
 
 ```
+
+## Platforms
+
+Linux and Mac OSX are tested and supported. Will add FreeBSD support later.
 
 ## License
 
