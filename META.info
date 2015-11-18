@@ -3,9 +3,9 @@
     "version" : "0.1.0",
     "author" : "sylvarant",
     "description" : "Brotli compression using NativeCall",
-	  "depends" : [ "NativeCall", "LibraryMake" ],
+    "depends" : [ "NativeCall", "LibraryMake" ],
     "provides" : {
         "Compress::Brotli" : "lib/Compress/Brotli.pm"
     },
-    "source-url" : "git://github.com/sylvaratn/Compress-Brotli.git"
+    "source-url" : "git://github.com/sylvarant/Compress-Brotli.git"
 }
