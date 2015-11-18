@@ -4,6 +4,16 @@ use LibraryMake;
 
 module Compress::Brotli:ver<0.1.0> {
 
+  #======================================
+  # Brotli Config class
+  #======================================
+
+  class Config is repr('CStruct') is export {
+    has int8 $.mode;
+    has int8 $.quality;
+    has int8 $.lgwin;
+    has int8 $.lgblock;
+  }
 
   #======================================
   # Native functions
@@ -26,13 +36,6 @@ module Compress::Brotli:ver<0.1.0> {
 			die ("Unable to locate library: $libname") unless $path;
 	  }
 	  return $path;
-  }
-
-  class Config is repr('CStruct') {
-    has int8 $.mode;
-    has int8 $.quality;
-    has int8 $.lgwin;
-    has int8 $.lgblock;
   }
 
   sub compress_buffer(Int,CArray[uint8], CArray[int], CArray[uint8],Config --> Int) 
@@ -66,15 +69,18 @@ module Compress::Brotli:ver<0.1.0> {
   # The brotli interface
   #======================================
 
-  our proto compress(Mu --> Buf) is export { * } 
+  our proto compress($data, $conf? --> Buf) is export { * } 
 
-  multi sub compress(Str $data) {
-	  return compress($data.encode("UTF-8"));
+  # default brotli parameters
+  my $def_conf = Config.new(:mode(0),:quality(11),:lgwin(22),:lgblock(0));
+  my $text_conf = Config.new(:mode(1),:quality(11),:lgwin(22),:lgblock(0));
+
+  multi sub compress(Str $data,Config $conf = $text_conf) {
+	  return compress($data.encode("UTF-8"),$conf);
   }
 
-  multi sub compress(Blob $data) { 
-    # default config
-    my $conf = Config.new(:mode(0),:quality(11),:lgwin(22),:lgblock(0));
+
+  multi sub compress(Blob $data, Config $conf = $def_conf) { 
     my Int $in_size = $data.bytes();
     my $input = CArray[uint8].new();
 	  $input[$_] = $data[$_] for ^$data.bytes;
