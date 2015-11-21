@@ -29,7 +29,8 @@ my Buf $blob = compress("a simple string",$conf);
 
 ## Platforms
 
-Linux and Mac OSX are tested and supported. Will add FreeBSD support later.
+Linux and Mac OSX are tested and supported. 
+FreeBSD not supported yet.
 
 ## License
 
