@@ -3,13 +3,6 @@
 # By Adriaan Larmuseau                  #
 #########################################
 
-#============================================
-# Tools
-#============================================
-
-LD = g++
-CC = g++
-SHELL := /bin/bash
 
 #============================================
 # Platform specific settings
@@ -23,10 +16,8 @@ ifeq ($(uname_S),Darwin)
 	NAME_LIB = -install_name
 	LD = clang
 	CC = clang
-endif
-
-ifeq ($(uname_S),Linux)
-	DEF_TARGET = linux
+else #ifeq ($(uname_S),Linux)
+	DEF_TARGET = linux # also works for FreeBSD
 	NAME_LIB = -soname
 endif
 
@@ -73,7 +64,7 @@ darwin: $(OBJECTS)
 
 linux: CFLAGS += -fPIC
 linux: $(OBJECTS)
-	$(CC) -shared -Wl,$(NAME_LIB),$(LIBA) -o $(LIBB) $^  ./libbrotli/lib/libbrotlienc.a ./libbrotli/lib/libbrotlidec.a
+	$(CC) -lstdc++ -shared -Wl,$(NAME_LIB),$(LIBA) -o $(LIBB) $^  ./libbrotli/lib/libbrotlienc.a ./libbrotli/lib/libbrotlidec.a
 	ln -sf  $(LIBB) $(LIBSO)
 	ln -sf  $(LIBB) $(LIBA)
 

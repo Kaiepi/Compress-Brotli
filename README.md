@@ -29,7 +29,14 @@ my Buf $blob = compress("a simple string",$conf);
 
 ## Platforms
 
-Linux and Mac OSX are tested and supported. Will add FreeBSD support later.
+Linux, FreeBSD and Mac OSX are tested and supported. 
+
+
+## Dependencies
+
+To build brotli the [libbrotli](https://github.com/bagder/libbrotli/) project is used.
+To succesfully compile libbrotli and the added wrapper library you need:
+`libtool`, `autoconf`, `gmake` and `automake`.
 
 ## License
 
