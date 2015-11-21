@@ -16,7 +16,11 @@ ifeq ($(uname_S),Darwin)
 	NAME_LIB = -install_name
 	LD = clang
 	CC = clang
-else #ifeq ($(uname_S),Linux)
+else #
+ifeq ($(uname_S),Linux)
+	LD = g++	
+	CC = g++
+endif
 	DEF_TARGET = linux # also works for FreeBSD
 	NAME_LIB = -soname
 endif
