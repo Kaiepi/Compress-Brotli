@@ -1,0 +1,74 @@
+#########################################
+#	 Custom MakeFile				   #
+# By Adriaan Larmuseau				  #
+#########################################
+
+#============================================
+# Flags
+#============================================
+
+INCLUDES=-Ilibbrotli
+DEPENDS=-Llibbrotli/brotli -lbrotlienc -lbrotlidec
+
+#============================================
+# Linkable Targets
+#============================================
+
+DESTINATION=../lib/
+LIB=libperl6brotli%SUFFIX%.1.0.1
+
+#============================================
+# Compilation sources
+#============================================
+
+# compile all c files in buildsrc
+SOURCE=$(wildcard *.cpp)
+OBJECTS=$(SOURCE:.cpp=.o)
+
+#============================================
+# Compiling Objects
+#============================================
+
+SUFFIXES = .cpp .o
+
+.cpp.o:
+	%CC% $(CFLAGS) $(INCLUDES) $(DEPENDS) -c -o $(.TARGET) $(.IMPSRC)	#TODO parameterize include
+
+#============================================
+# Linking
+#============================================
+
+build: $(OBJECTS) libbrotli/lib/libbrotlienc.a libbrotli/lib/libbrotlidec.a
+	stat libbrotli || git clone https://github.com/bagder/libbrotli
+	cd libbrotli
+	# ./autogen.sh
+	# ./configure
+	# %MAKE%
+	cd ..
+	%CXX% %CFLAGS% $(INCLUDES) $(DEPENDS) -Wl,%NAME_LIB%,$(LIB) -o $@ brotli.cpp
+	ln -sf $(LIB) $(DESTINATION)$(LIB)
+.PHONY: build
+
+#============================================
+# Results
+#============================================
+
+all: build
+.PHONY: all
+
+install:
+	cd libbrotli
+	make install
+	cd ..
+.PHONY: build
+
+#============================================
+# Helpers
+#============================================
+
+clean:
+	rm $(OBJECTS) $(LIB)
+	rm -rf libbrotli
+.PHONY: clean
+
+

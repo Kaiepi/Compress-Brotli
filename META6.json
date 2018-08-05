@@ -4,7 +4,8 @@
     "version" : "0.1.0",
     "author" : "sylvarant",
     "description" : "Brotli compression using NativeCall",
-    "depends" : [ "NativeCall", "LibraryMake" ],
+	"build-depends": [ "LibraryMake" ],
+    "depends" : [ "NativeCall" ],
     "provides" : {
         "Compress::Brotli" : "lib/Compress/Brotli.pm"
     },
